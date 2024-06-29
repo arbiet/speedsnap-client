@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
-import { showWarningAlert, showSuccessAlert } from '../utils/alertUtils';
+import { showWarningAlert, showSuccessAlert } from '../Utils/alertUtils';
 
 export default function Layout() {
     const { user, logout } = useContext(AppContext);

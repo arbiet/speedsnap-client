@@ -1,14 +1,15 @@
-import { createContext, useEffect, useState } from "react";
-import { showSuccessAlert, showErrorAlert } from '../utils/alertUtils';
+import { createContext, useEffect, useState, useCallback } from "react";
+import PropTypes from 'prop-types';
+import { showSuccessAlert, showErrorAlert } from '../Utils/alertUtils';
 
 export const AppContext = createContext()
 
-export default function AppProvider({children}) {
+export default function AppProvider({ children }) {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [user, setUser] = useState({});
-    const [alertShown, setAlertShown] = useState(false);  // State to track if alert has been shown
+    const [alertShown, setAlertShown] = useState(false);
 
-    async function getUser() {
+    const getUser = useCallback(async () => {
         try {
             const res = await fetch("/api/user", {
                 headers: {
@@ -32,7 +33,7 @@ export default function AppProvider({children}) {
             console.error(error);
             showErrorAlert('Error', 'Failed to fetch user data. Please try again.');
         }
-    }
+    }, [token, alertShown]);
 
     async function logout() {
         try {
@@ -47,7 +48,7 @@ export default function AppProvider({children}) {
                 setToken(null);
                 setUser({});
                 localStorage.removeItem("token");
-                setAlertShown(false);  // Reset alertShown state
+                setAlertShown(false);
                 showSuccessAlert('Logged Out', 'You have been logged out successfully!');
             } else {
                 throw new Error('Failed to log out');
@@ -62,7 +63,7 @@ export default function AppProvider({children}) {
         if (token) {
             getUser();
         }
-    }, [token]);
+    }, [token, getUser]);
 
     console.log("Token: ", token);
     console.log("User: ", user);
@@ -73,3 +74,7 @@ export default function AppProvider({children}) {
         </AppContext.Provider>
     )
 }
+
+AppProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};

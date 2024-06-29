@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../Context/AppContext";
-import { showSuccessAlert, showErrorAlert } from '../../utils/alertUtils';
+import { showSuccessAlert, showErrorAlert } from '../../Utils/alertUtils';
 
 export default function Register() {
     const { setToken } = useContext(AppContext)
