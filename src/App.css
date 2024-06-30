@@ -67,3 +67,21 @@
         @apply w-8 h-8 rounded-full overflow-hidden object-center object-cover;
     }
 }
+
+/* Add this to your existing CSS or create new styles as needed */
+.primary-btn {
+    @apply bg-blue-500 text-white py-2 px-4 rounded;
+}
+
+.edit-btn {
+    @apply text-blue-500 hover:text-blue-700;
+}
+
+.delete-btn {
+    @apply text-red-500 hover:text-red-700;
+}
+
+.title {
+    @apply text-2xl font-bold;
+}
+

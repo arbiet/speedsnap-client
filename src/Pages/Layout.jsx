@@ -22,23 +22,26 @@ export default function Layout() {
 
     return (
         <>
-            <header>
-                <nav>
-                    <Link to="/" className="nav-link">Home</Link>
+            <header className="bg-gray-800 p-4 text-white">
+                <nav className="flex justify-between items-center">
+                    <div>
+                        <Link to="/" className="nav-link px-4 text-white">Home</Link>
+                        <Link to="/users" className="nav-link px-4 text-white">Users</Link>
+                    </div>
                     {user && user.name ? (
-                        <div className="space-x-4 flex flex-row">
-                            <p className="text-slate-200 rounded-md px-3 py-2 text-sm ">Welcome back, {user.name}</p>
-                            <button onClick={handleLogout} className="nav-link">Logout</button>
+                        <div className="space-x-4 flex flex-row items-center">
+                            <p className="text-slate-200 rounded-md px-3 py-2 text-sm">Welcome back, {user.name}</p>
+                            <button onClick={handleLogout} className="nav-link px-4 text-white">Logout</button>
                         </div>
                     ) : (
                         <div className="space-x-4">
-                            <Link to="/register" className="nav-link">Register</Link>
-                            <Link to="/login" className="nav-link">Login</Link>
+                            <Link to="/register" className="nav-link px-4 text-white">Register</Link>
+                            <Link to="/login" className="nav-link px-4 text-white">Login</Link>
                         </div>
                     )}
                 </nav>
             </header>
-            <main>
+            <main className="p-4">
                 <Outlet />
             </main>
         </>

@@ -1,4 +1,3 @@
-// src/utils/alertUtils.js
 import Swal from 'sweetalert2';
 
 export function showSuccessAlert(title, text) {
@@ -31,4 +30,20 @@ export function showWarningAlert(title, text, confirmButtonText, onConfirm) {
             onConfirm();
         }
     });
+}
+
+export function showLoadingAlert(title = 'Loading', text = 'Please wait...') {
+    Swal.fire({
+        title: title,
+        text: text,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+
+export function hideLoadingAlert() {
+    Swal.close();
 }
