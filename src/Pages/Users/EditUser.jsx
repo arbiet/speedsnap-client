@@ -4,7 +4,7 @@ import { AppContext } from "../../Context/AppContext";
 import { showSuccessAlert, showErrorAlert, showLoadingAlert, hideLoadingAlert } from "../../Utils/alertUtils";
 
 export default function EditUser() {
-    const { token } = useContext(AppContext);
+    const { token, user } = useContext(AppContext);
     const { id } = useParams();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -48,14 +48,31 @@ export default function EditUser() {
 
     async function handleEditUser(e) {
         e.preventDefault();
+        if (user.user_type !== 'admin') {
+            showErrorAlert('Access Denied', 'You do not have permission to edit users.');
+            return;
+        }
+
+        // Construct the payload
+        const payload = {
+            name: formData.name,
+            email: formData.email,
+        };
+
+        if (formData.password) {
+            payload.password = formData.password;
+            payload.password_confirmation = formData.password_confirmation;
+        }
+
         const res = await fetch(`/api/users/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(payload),
         });
+
         const data = await res.json();
         
         if (data.errors) {

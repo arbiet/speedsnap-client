@@ -2,12 +2,12 @@ import { createContext, useEffect, useState, useCallback } from "react";
 import PropTypes from 'prop-types';
 import { showSuccessAlert, showErrorAlert } from '../Utils/alertUtils';
 
-export const AppContext = createContext()
+export const AppContext = createContext();
 
 export default function AppProvider({ children }) {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [user, setUser] = useState({});
-    const [alertShown, setAlertShown] = useState(false);
+    const [alertShown, setAlertShown] = useState(localStorage.getItem("alertShown") === 'true');
 
     const getUser = useCallback(async () => {
         try {
@@ -19,18 +19,22 @@ export default function AppProvider({ children }) {
 
             if (!res.ok) {
                 throw new Error('Failed to fetch user data');
-            }
-
-            const data = await res.json();
-            setUser(data);
-            console.log(data);
-
-            if (!alertShown) {
-                showSuccessAlert('Logged In', `Welcome back, ${data.name}!`);
-                setAlertShown(true);
+            } else {
+                const data = await res.json();
+                setUser(data);
+                console.log(data);
+                if (!alertShown) {
+                    showSuccessAlert('Logged In', `Welcome back, ${data.name}!`);
+                    setAlertShown(true);
+                    localStorage.setItem("alertShown", 'true');
+                }
             }
         } catch (error) {
             console.error(error);
+            setToken(null);
+            setUser({});
+            localStorage.removeItem("token");
+            localStorage.removeItem("alertShown");
             showErrorAlert('Error', 'Failed to fetch user data. Please try again.');
         }
     }, [token, alertShown]);
@@ -48,6 +52,7 @@ export default function AppProvider({ children }) {
                 setToken(null);
                 setUser({});
                 localStorage.removeItem("token");
+                localStorage.removeItem("alertShown");
                 setAlertShown(false);
                 showSuccessAlert('Logged Out', 'You have been logged out successfully!');
             } else {
@@ -72,7 +77,7 @@ export default function AppProvider({ children }) {
         <AppContext.Provider value={{ token, setToken, user, logout }}>
             {children}
         </AppContext.Provider>
-    )
+    );
 }
 
 AppProvider.propTypes = {

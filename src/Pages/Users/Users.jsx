@@ -64,6 +64,7 @@ export default function Users() {
     const columns = [
         { name: 'Name', selector: row => row.name, sortable: true },
         { name: 'Email', selector: row => row.email, sortable: true },
+        { name: 'User Type', selector: row => row.user_type, sortable: true }, // Add this line
         { name: 'Created At', selector: row => new Date(row.created_at).toLocaleString(), sortable: true },
         { name: 'Updated At', selector: row => new Date(row.updated_at).toLocaleString(), sortable: true },
         {
