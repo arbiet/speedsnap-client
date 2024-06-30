@@ -29,7 +29,7 @@ const SpeedTest = () => {
     const [deviceAddress, setDeviceAddress] = useState(null);
     const [ipAddress, setIpAddress] = useState(null);
 
-    const generateTimeSeriesData = (baseValue, count = 20, variance = 0.1) => {
+    const generateTimeSeriesData = (baseValue, count = 10, variance = 0.1) => {
         const data = [];
         for (let i = 0; i < count; i++) {
             // Generate a value with some randomness

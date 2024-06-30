@@ -8,7 +8,9 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 export default function Users() {
     const { token } = useContext(AppContext);
     const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchText, setSearchText] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,6 +26,7 @@ export default function Users() {
                 }
                 const data = await res.json();
                 setUsers(data);
+                setFilteredUsers(data);
             } catch (error) {
                 console.error(error);
                 showErrorAlert('Error', 'Failed to fetch users. Please try again.');
@@ -52,6 +55,7 @@ export default function Users() {
                         throw new Error('Failed to delete user');
                     }
                     setUsers(users.filter(user => user.id !== id));
+                    setFilteredUsers(filteredUsers.filter(user => user.id !== id));
                     showSuccessAlert('User Deleted', 'The user has been deleted successfully!');
                 } catch (error) {
                     console.error(error);
@@ -61,10 +65,20 @@ export default function Users() {
         );
     };
 
+    const handleSearch = (event) => {
+        setSearchText(event.target.value);
+        const filteredData = users.filter(user =>
+            user.name.toLowerCase().includes(event.target.value.toLowerCase()) ||
+            user.email.toLowerCase().includes(event.target.value.toLowerCase()) ||
+            user.user_type.toLowerCase().includes(event.target.value.toLowerCase())
+        );
+        setFilteredUsers(filteredData);
+    };
+
     const columns = [
         { name: 'Name', selector: row => row.name, sortable: true },
         { name: 'Email', selector: row => row.email, sortable: true },
-        { name: 'User Type', selector: row => row.user_type, sortable: true }, // Add this line
+        { name: 'User Type', selector: row => row.user_type, sortable: true },
         { name: 'Created At', selector: row => new Date(row.created_at).toLocaleString(), sortable: true },
         { name: 'Updated At', selector: row => new Date(row.updated_at).toLocaleString(), sortable: true },
         {
@@ -93,9 +107,18 @@ export default function Users() {
                     <Link to="/users/new" className="primary-btn">Add New User</Link>
                 </div>
             </div>
+            <div className="mb-4">
+                <input
+                    type="text"
+                    placeholder="Search users"
+                    value={searchText}
+                    onChange={handleSearch}
+                    className="search-input"
+                />
+            </div>
             <DataTable
                 columns={columns.map(({ allowOverflow, button, ...rest }) => rest)}
-                data={users}
+                data={filteredUsers}
                 progressPending={loading}
                 pagination
                 highlightOnHover

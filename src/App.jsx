@@ -9,7 +9,8 @@ import Register from './Pages/Auth/Register';
 import Users from './Pages/Users/Users';
 import AddUser from './Pages/Users/AddUser';
 import EditUser from './Pages/Users/EditUser';
-import SpeedTest from './Pages/SpeedTest/SpeedTest'; // Import the SpeedTest component
+import SpeedTest from './Pages/SpeedTest/SpeedTest';
+import Recommendations from './Pages/Recommendations';
 import { useContext } from 'react';
 import { AppContext } from './Context/AppContext';
 
@@ -26,7 +27,8 @@ export default function App() {
           <Route path='/users' element={token ? <Users /> : <Login />} />
           <Route path='/users/new' element={token ? <AddUser /> : <Login />} />
           <Route path='/users/:id/edit' element={token ? <EditUser /> : <Login />} />
-          <Route path='/speedtest' element={token ? <SpeedTest /> : <Login />} /> {/* Add SpeedTest route */}
+          <Route path='/speedtest' element={token ? <SpeedTest /> : <Login />} />
+          <Route path='/recommendations' element={token ? <Recommendations /> : <Login />} />
         </Route>
       </Routes>
     </BrowserRouter>

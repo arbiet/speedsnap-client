@@ -31,6 +31,7 @@ export default function Layout() {
                         <div className="space-x-4 flex flex-row items-center">
                             <p className="text-slate-200 rounded-md px-3 py-2 text-sm">Welcome back, {user.name}</p>
                             <Link to="/speedtest" className="nav-link px-4 text-white">Speed Test</Link>
+                            <Link to="/recommendations" className="nav-link px-4 text-white">ISP Recommendations</Link>
                             {user.user_type === 'admin' && (
                                 <Link to="/users" className="nav-link px-4 text-white">Users</Link>
                             )}
