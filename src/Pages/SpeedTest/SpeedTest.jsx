@@ -25,7 +25,7 @@ const SpeedTest = () => {
     const [ipInfo, setIpInfo] = useState(null);
     const [testing, setTesting] = useState(false);
     const [userAgent, setUserAgent] = useState(navigator.userAgent);
-    const [dummyData, setDummyData] = useState({});
+    const [getData, setgetData] = useState({});
     const [deviceAddress, setDeviceAddress] = useState(null);
     const [ipAddress, setIpAddress] = useState(null);
 
@@ -88,7 +88,7 @@ const SpeedTest = () => {
                 ping: generateTimeSeriesData(ping),
                 latency: generateTimeSeriesData(latency),
             };
-            setDummyData(timeseriesData);
+            setgetData(timeseriesData);
 
             if (ipInfo && deviceAddress) {
                 console.log('Device Address:', deviceAddress); // Log the device address to the console
@@ -147,7 +147,7 @@ const SpeedTest = () => {
         setPacketLoss(null);
         setPing(null);
         setLatency(null);
-        setDummyData({});
+        setgetData({});
         setDeviceAddress(null);
         setIpAddress(null);
     };
@@ -281,8 +281,8 @@ const SpeedTest = () => {
                 </div>
             </div>
             <div className="space-y-6">
-                <h2>Dummy Data (Timeseries)</h2>
-                <pre>{JSON.stringify(dummyData, null, 2)}</pre>
+                <h2>(Timeseries)</h2>
+                <pre>{JSON.stringify(getData, null, 2)}</pre>
             </div>
         </div>
     );
