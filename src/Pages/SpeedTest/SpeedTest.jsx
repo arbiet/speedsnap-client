@@ -32,7 +32,6 @@ const SpeedTest = () => {
     const generateTimeSeriesData = (baseValue, count = 10, variance = 0.1) => {
         const data = [];
         for (let i = 0; i < count; i++) {
-            // Generate a value with some randomness
             const value = baseValue * (1 + (Math.random() - 0.5) * 2 * variance);
             data.push(value);
         }
@@ -91,7 +90,8 @@ const SpeedTest = () => {
             };
             setDummyData(timeseriesData);
 
-            if (ipInfo) {
+            if (ipInfo && deviceAddress) {
+                console.log('Device Address:', deviceAddress); // Log the device address to the console
                 saveResults({
                     isp: {
                         name: ipInfo.org,
@@ -103,6 +103,7 @@ const SpeedTest = () => {
                         loc: ipInfo.loc,
                         org: ipInfo.org,
                         timezone: ipInfo.timezone,
+                        district: deviceAddress.district // Include district information
                     },
                     speed_measurement: {
                         download_speed: downloadSpeed,
@@ -128,12 +129,13 @@ const SpeedTest = () => {
                         city: deviceAddress?.city,
                         state: deviceAddress?.state,
                         country: deviceAddress?.country,
+                        district: deviceAddress.district // Include district information
                     },
                     user_agent: userAgent,
                 });
             } else {
-                console.error('IP information is not available.');
-                Swal.fire('Error', 'IP information is not available.', 'error');
+                console.error('IP information or device address is not available.');
+                Swal.fire('Error', 'IP information or device address is not available.', 'error');
             }
         }
     }, [downloadSpeed, uploadSpeed, jitter, packetLoss, ping, latency, ipInfo, coords, deviceAddress, userAgent]);
@@ -156,6 +158,7 @@ const SpeedTest = () => {
 
         if (coords) {
             const deviceAddr = await getAddressFromLatLng(coords.latitude, coords.longitude);
+            console.log('Geocoded Address:', deviceAddr); // Log the geocoded address to the console
             setDeviceAddress(deviceAddr);
         }
 
