@@ -23,6 +23,9 @@ import EditServiceType from './Pages/ISPs/EditServiceType';
 import PlanDetails from './Pages/ISPs/PlanDetails';
 import AddPlanDetail from './Pages/ISPs/AddPlanDetail';
 import EditPlanDetail from './Pages/ISPs/EditPlanDetail';
+import AliasList from './Pages/Aliases/AliasList';
+import AddAlias from './Pages/Aliases/AddAlias';
+import EditAlias from './Pages/Aliases/EditAlias';
 import { useContext } from 'react';
 import { AppContext } from './Context/AppContext';
 
@@ -39,7 +42,7 @@ export default function App() {
           <Route path='/users' element={token ? <Users /> : <Login />} />
           <Route path='/users/new' element={token ? <AddUser /> : <Login />} />
           <Route path='/users/:id/edit' element={token ? <EditUser /> : <Login />} />
-          <Route path='/speedtest' element={token ? <SpeedTest /> : <Login />} />
+          <Route path='/speedtest' element={ <SpeedTest />} />
           <Route path='/recommendations' element={token ? <Recommendations /> : <Login />} />
           <Route path='/service_providers' element={token ? <ServiceProviders /> : <Login />} />
           <Route path='/service_providers/new' element={token ? <AddServiceProvider /> : <Login />} />
@@ -53,6 +56,9 @@ export default function App() {
           <Route path='/plan_details' element={token ? <PlanDetails /> : <Login />} />
           <Route path='/plan_details/new' element={token ? <AddPlanDetail /> : <Login />} />
           <Route path='/plan_details/:id/edit' element={token ? <EditPlanDetail /> : <Login />} />
+          <Route path='/aliases' element={token ? <AliasList /> : <Login />} />
+          <Route path='/aliases/new' element={token ? <AddAlias /> : <Login />} />
+          <Route path='/aliases/:id/edit' element={token ? <EditAlias /> : <Login />} />
         </Route>
       </Routes>
     </BrowserRouter>

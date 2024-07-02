@@ -1,11 +1,8 @@
 // src/Pages/SpeedTest/testJitter.js
 
-export const testJitter = async (token, setJitter) => {
+export const testJitter = async (setJitter) => {
     const response = await fetch('/api/speedtest/jitter', {
         method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
     });
     if (response.ok) {
         const data = await response.json();

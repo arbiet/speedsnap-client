@@ -1,11 +1,8 @@
 // src/Pages/SpeedTest/testPing.js
 
-export const testPing = async (token, setPing) => {
+export const testPing = async (setPing) => {
     const response = await fetch('/api/speedtest/ping', {
         method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
     });
     if (response.ok) {
         const data = await response.json();

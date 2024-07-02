@@ -37,7 +37,7 @@ const GaugeChart = ({ label, unit, data }) => {
                 ctx.save();
                 const xCoor = chart.getDatasetMeta(0).data[0].x;
                 const yCoor = chart.getDatasetMeta(0).data[0].y;
-                const score = data.datasets[0].data[0];
+                const score = Math.round(data.datasets[0].data[0]);
                 let rating;
 
                 if (score < 10) {
@@ -60,7 +60,7 @@ const GaugeChart = ({ label, unit, data }) => {
 
                 textLabel(`0 ${unit}`, left, yCoor + 20, 15, 'top', 'left');
                 textLabel(`100 ${unit}`, right, yCoor + 20, 15, 'top', 'right');
-                textLabel(score, xCoor, yCoor, 100, 'bottom', 'center');
+                textLabel(`${score} Mbps`, xCoor, yCoor, 80, 'bottom', 'center');
                 textLabel(rating, xCoor, yCoor - 100, 30, 'bottom', 'center');
             }
         };

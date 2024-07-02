@@ -1,12 +1,9 @@
 // src/Pages/SpeedTest/fetchIpInfoToken.js
 
-export const fetchIpInfoToken = async (token) => {
+export const fetchIpInfoToken = async () => {
     try {
         const response = await fetch('/api/ipinfo/token', {
             method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         });
         
         if (response.ok) {

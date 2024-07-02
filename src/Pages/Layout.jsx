@@ -10,18 +10,19 @@ const adminLinks = [
         { to: "/service_providers", label: "Manage ISPs" },
         { to: "/coverage_areas", label: "Coverage Areas" },
         { to: "/service_types", label: "Service Types" },
-        { to: "/plan_details", label: "Plan Details" }
+        { to: "/plan_details", label: "Plan Details" },
+        { to: "/aliases", label: "Manage Aliases" }
     ] },
 ];
 
 
 const userLinks = [
-  { to: "/speedtest", label: "Internet Service Provider" },
   { to: "/speedtest", label: "Speed Test" },
   { to: "", label: "Recommendations", subLinks: [{ to: "/recommendations", label: "Top Recommendations" }] },
 ];
 
 const guestLinks = [
+  { to: "/speedtest", label: "Speed Test" },
   { to: "/register", label: "Register" },
   { to: "/login", label: "Login" },
 ];

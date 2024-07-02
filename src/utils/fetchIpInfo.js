@@ -2,8 +2,8 @@
 import { fetchIpInfoToken } from '../Pages/SpeedTest/fetchIpInfoToken';
 import { getAddressFromLatLng } from './getAddressFromLatLng';
 
-export const fetchIpInfo = async (token, setIpInfo, setIpAddress) => {
-    const ipToken = await fetchIpInfoToken(token);
+export const fetchIpInfo = async (setIpInfo, setIpAddress) => {
+    const ipToken = await fetchIpInfoToken();
     if (ipToken) {
         try {
             const response = await fetch(`https://ipinfo.io/json?token=${ipToken}`);

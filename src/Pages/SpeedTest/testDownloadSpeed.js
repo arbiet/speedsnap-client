@@ -1,12 +1,9 @@
 // src/Pages/SpeedTest/testDownloadSpeed.js
 
-export const testDownloadSpeed = async (token, setDownloadSpeed) => {
+export const testDownloadSpeed = async (setDownloadSpeed) => {
     const startTime = new Date().getTime();
     const response = await fetch('/api/speedtest/download', {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+        method: 'GET'
     });
     if (response.status === 401 || response.status === 403) {
         console.error('Error:', response.statusText);
@@ -22,3 +19,4 @@ export const testDownloadSpeed = async (token, setDownloadSpeed) => {
     setDownloadSpeed(speed);
     console.log('Download Test Completed:', `Download speed: ${speed} Mbps`);
 };
+

@@ -1,6 +1,4 @@
-// src/Pages/SpeedTest/testUploadSpeed.js
-
-export const testUploadSpeed = async (token, setUploadSpeed) => {
+export const testUploadSpeed = async (setUploadSpeed) => {
     const largeString = 'a'.repeat(1024 * 1024 * 5); // 5MB string
     
     const formData = {
@@ -13,7 +11,6 @@ export const testUploadSpeed = async (token, setUploadSpeed) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(formData),
         });

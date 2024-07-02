@@ -3,17 +3,16 @@ export const getAddressFromLatLng = async (lat, lng) => {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
         if (response.ok) {
             const data = await response.json();
-            let district = data.address.suburb || data.address.neighbourhood || data.address.district || getRandomDistrict();
-            const validDistricts = ['Mojoroto', 'Pesantren', 'Kota'];
-            
-            if (!validDistricts.includes(district)) {
-                district = 'Kecamatan Luar';
-            }
+            let district = data.address.suburb || data.address.neighbourhood || data.address.district;
+            let city = data.address.city || data.address.town;
 
-            const city = data.address.city || data.address.town || data.address.village;
+            const validDistricts = ['Mojoroto', 'Pesantren', 'Kota'];
             const validCities = ['Kediri', 'Kediri City', 'City Kediri', 'Kediri Kota'];
-            
-            if (!validCities.includes(city)) {
+
+            district = normalizeDistrict(district, validDistricts);
+            city = normalizeCity(city, validCities);
+
+            if (city === 'Kota Luar') {
                 return {
                     road: data.address.road,
                     city: 'Kota Luar',
@@ -40,7 +39,16 @@ export const getAddressFromLatLng = async (lat, lng) => {
     }
 };
 
-const getRandomDistrict = () => {
-    const districts = ['Mojoroto', 'Pesantren', 'Kota'];
-    return districts[Math.floor(Math.random() * districts.length)];
+const normalizeDistrict = (district, validDistricts) => {
+    const normalizedDistrict = validDistricts.find(validDistrict => 
+        new RegExp(`\\b${validDistrict}\\b`, 'i').test(district)
+    );
+    return normalizedDistrict || 'Kecamatan Luar';
+};
+
+const normalizeCity = (city, validCities) => {
+    const normalizedCity = validCities.find(validCity => 
+        new RegExp(`\\b${validCity}\\b`, 'i').test(city)
+    );
+    return normalizedCity || 'Kota Luar';
 };

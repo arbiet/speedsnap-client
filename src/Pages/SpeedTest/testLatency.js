@@ -1,11 +1,8 @@
 // src/Pages/SpeedTest/testLatency.js
 
-export const testLatency = async (token, setLatency) => {
+export const testLatency = async (setLatency) => {
     const response = await fetch('/api/speedtest/latency', {
         method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
     });
     if (response.ok) {
         const data = await response.json();

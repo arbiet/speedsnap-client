@@ -1,11 +1,8 @@
 // src/Pages/SpeedTest/testPacketLoss.js
 
-export const testPacketLoss = async (token, setPacketLoss) => {
+export const testPacketLoss = async (setPacketLoss) => {
     const response = await fetch('/api/speedtest/packet_loss', {
         method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
     });
     if (response.ok) {
         const data = await response.json();

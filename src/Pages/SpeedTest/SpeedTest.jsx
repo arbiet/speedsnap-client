@@ -17,7 +17,6 @@ import GaugeChart from './GaugeChart';
 import { FaGlobe, FaDownload, FaUpload, FaTachometerAlt, FaMapMarkerAlt, FaNetworkWired } from 'react-icons/fa';
 
 const SpeedTest = () => {
-    const { token } = useContext(AppContext);
     const [downloadSpeed, setDownloadSpeed] = useState(null);
     const [uploadSpeed, setUploadSpeed] = useState(null);
     const [jitter, setJitter] = useState(null);
@@ -39,8 +38,8 @@ const SpeedTest = () => {
     });
 
     useEffect(() => {
-        fetchIpInfo(token, setIpInfo, setIpAddress);
-    }, [token]);
+        fetchIpInfo(setIpInfo, setIpAddress);
+    }, []);
 
     useEffect(() => {
         if (
@@ -103,7 +102,7 @@ const SpeedTest = () => {
                         district: deviceAddress.district // Include district information
                     },
                     user_agent: userAgent,
-                }, token);
+                });
             } else {
                 console.error('IP information or device address is not available.');
                 Swal.fire('Error', 'IP information or device address is not available.', 'error');
@@ -133,12 +132,12 @@ const SpeedTest = () => {
             setDeviceAddress(deviceAddr);
         }
 
-        await testDownloadSpeed(token, setDownloadSpeed);
-        await testUploadSpeed(token, setUploadSpeed);
-        await testJitter(token, setJitter);
-        await testPacketLoss(token, setPacketLoss);
-        await testPing(token, setPing);
-        await testLatency(token, setLatency);
+        await testDownloadSpeed(setDownloadSpeed);
+        await testUploadSpeed(setUploadSpeed);
+        await testJitter(setJitter);
+        await testPacketLoss(setPacketLoss);
+        await testPing(setPing);
+        await testLatency(setLatency);
 
         setTesting(false);
     };
