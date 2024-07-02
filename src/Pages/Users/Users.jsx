@@ -101,13 +101,13 @@ export default function Users() {
 
     return (
         <>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 container mx-auto">
                 <h1 className="title">Users</h1>
                 <div className="space-x-4">
                     <Link to="/users/new" className="primary-btn">Add New User</Link>
                 </div>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 container mx-auto">
                 <input
                     type="text"
                     placeholder="Search users"
@@ -116,13 +116,15 @@ export default function Users() {
                     className="search-input"
                 />
             </div>
-            <DataTable
-                columns={columns.map(({ allowOverflow, button, ...rest }) => rest)}
-                data={filteredUsers}
-                progressPending={loading}
-                pagination
-                highlightOnHover
-            />
+            <div className="mb-4 container mx-auto">
+                <DataTable
+                    columns={columns.map(({ allowOverflow, button, ...rest }) => rest)}
+                    data={filteredUsers}
+                    progressPending={loading}
+                    pagination
+                    highlightOnHover
+                />
+            </div>
         </>
     );
 }

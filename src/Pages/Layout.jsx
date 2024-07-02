@@ -3,6 +3,22 @@ import { Link, useNavigate, Outlet } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import { showWarningAlert, showSuccessAlert } from '../Utils/alertUtils';
 
+const adminLinks = [
+    { to: "/dashboard", label: "Dashboard" },
+  { to: "", label: "Users", subLinks: [{ to: "/users", label: "Manage Users" }] },
+];
+
+const userLinks = [
+  { to: "/speedtest", label: "Internet Service Provider" },
+  { to: "/speedtest", label: "Speed Test" },
+  { to: "", label: "Recommendations", subLinks: [{ to: "/recommendations", label: "Top Recommendations" }] },
+];
+
+const guestLinks = [
+  { to: "/register", label: "Register" },
+  { to: "/login", label: "Login" },
+];
+
 export default function Layout() {
     const { user, logout } = useContext(AppContext);
     const navigate = useNavigate();
@@ -20,27 +36,54 @@ export default function Layout() {
         );
     }
 
+    const renderLinks = () => {
+        let links = [];
+        if (user && user.user_type === 'admin') {
+            links = adminLinks;
+        } else if (user && user.user_type === 'user') {
+            links = userLinks;
+        } else {
+            links = guestLinks;
+        }
+
+        return links.map((link, index) => (
+            <div key={index} className="relative">
+                {link.subLinks ? (
+                    <details className="group">
+                        <summary className="nav-link px-4 text-white cursor-pointer">{link.label}</summary>
+                        <div className="absolute left-0 mt-1 w-48 bg-white shadow-md rounded-md z-10">
+                            {link.subLinks.map((subLink, subIndex) => (
+                                <Link key={subIndex} to={subLink.to} className="block px-4 py-2 text-black hover:bg-gray-200">
+                                    {subLink.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </details>
+                ) : (
+                    <Link to={link.to} className="nav-link px-4 text-white">
+                        {link.label}
+                    </Link>
+                )}
+            </div>
+        ));
+    };
+
     return (
         <>
             <header className="bg-gray-800 p-4 text-white">
                 <nav className="flex justify-between items-center">
                     <div>
-                        <Link to="/" className="nav-link px-4 text-white">Home</Link>
+                        <Link to="/" className="nav-link px-4 text-white">Speedsnap.my.id</Link>
                     </div>
                     {user && user.name ? (
                         <div className="space-x-4 flex flex-row items-center">
                             <p className="text-slate-200 rounded-md px-3 py-2 text-sm">Welcome back, {user.name}</p>
-                            <Link to="/speedtest" className="nav-link px-4 text-white">Speed Test</Link>
-                            <Link to="/recommendations" className="nav-link px-4 text-white">ISP Recommendations</Link>
-                            {user.user_type === 'admin' && (
-                                <Link to="/users" className="nav-link px-4 text-white">Users</Link>
-                            )}
+                            {renderLinks()}
                             <button onClick={handleLogout} className="nav-link px-4 text-white">Logout</button>
                         </div>
                     ) : (
-                        <div className="space-x-4">
-                            <Link to="/register" className="nav-link px-4 text-white">Register</Link>
-                            <Link to="/login" className="nav-link px-4 text-white">Login</Link>
+                        <div className="space-x-4 flex">
+                            {renderLinks()}
                         </div>
                     )}
                 </nav>

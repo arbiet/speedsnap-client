@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../Context/AppContext';
 import { testDownloadSpeed } from './testDownloadSpeed';
 import { testUploadSpeed } from './testUploadSpeed';
@@ -7,12 +6,15 @@ import { testJitter } from './testJitter';
 import { testPacketLoss } from './testPacketLoss';
 import { testPing } from './testPing';
 import { testLatency } from './testLatency';
-import { fetchIpInfoToken } from './fetchIpInfoToken';
-import { getAddressFromLatLng } from '../../Utils/getAddressFromLatLng';
 import { useGeolocated } from 'react-geolocated';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import Swal from 'sweetalert2';
+import MapComponent from '../../Components/MapComponent';
+import { generateTimeSeriesData } from '../../Utils/generateTimeSeriesData';
+import { getAddressFromLatLng } from '../../Utils/getAddressFromLatLng';
+import { fetchIpInfo } from '../../Utils/fetchIpInfo';
+import { saveResults } from '../../Utils/saveResults';
+import GaugeChart from './GaugeChart';
+import { FaGlobe, FaDownload, FaUpload, FaTachometerAlt, FaMapMarkerAlt, FaNetworkWired } from 'react-icons/fa';
 
 const SpeedTest = () => {
     const { token } = useContext(AppContext);
@@ -29,15 +31,6 @@ const SpeedTest = () => {
     const [deviceAddress, setDeviceAddress] = useState(null);
     const [ipAddress, setIpAddress] = useState(null);
 
-    const generateTimeSeriesData = (baseValue, count = 10, variance = 0.1) => {
-        const data = [];
-        for (let i = 0; i < count; i++) {
-            const value = baseValue * (1 + (Math.random() - 0.5) * 2 * variance);
-            data.push(value);
-        }
-        return data;
-    };
-
     const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
         positionOptions: {
             enableHighAccuracy: true,
@@ -46,29 +39,7 @@ const SpeedTest = () => {
     });
 
     useEffect(() => {
-        const fetchIpInfo = async () => {
-            const ipToken = await fetchIpInfoToken(token);
-            if (ipToken) {
-                try {
-                    const response = await fetch(`https://ipinfo.io/json?token=${ipToken}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        setIpInfo(data);
-                        console.log('Fetched IP Info:', data);
-
-                        const [lat, lng] = data.loc.split(',');
-                        const ipAddr = await getAddressFromLatLng(lat, lng);
-                        setIpAddress(ipAddr);
-                    } else {
-                        console.error('Error fetching IP info:', response.statusText);
-                    }
-                } catch (error) {
-                    console.error('Error fetching IP info:', error);
-                }
-            }
-        };
-
-        fetchIpInfo();
+        fetchIpInfo(token, setIpInfo, setIpAddress);
     }, [token]);
 
     useEffect(() => {
@@ -132,7 +103,7 @@ const SpeedTest = () => {
                         district: deviceAddress.district // Include district information
                     },
                     user_agent: userAgent,
-                });
+                }, token);
             } else {
                 console.error('IP information or device address is not available.');
                 Swal.fire('Error', 'IP information or device address is not available.', 'error');
@@ -172,117 +143,99 @@ const SpeedTest = () => {
         setTesting(false);
     };
 
-    const saveResults = async (data) => {
-        try {
-            const response = await fetch('/api/speedtest/results', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (response.ok) {
-                Swal.fire('Success', 'Results saved successfully!', 'success');
-            } else {
-                const errorData = await response.json();
-                console.error('Validation failed:', errorData);
-                Swal.fire('Error', errorData.error ? JSON.stringify(errorData.error) : 'An error occurred', 'error');
-            }
-        } catch (error) {
-            console.error('Failed to save speed test data:', error);
-            Swal.fire('Error', 'Request failed', 'error');
-        }
-    };
-
     const devicePosition = coords ? [coords.latitude, coords.longitude] : null;
     const ipPosition = ipInfo && ipInfo.loc ? ipInfo.loc.split(',').map(Number) : null;
 
-    const renderMap = () => {
-        if (!devicePosition && !ipPosition) return null;
-
-        return (
-            <MapContainer center={devicePosition || ipPosition} zoom={13} style={{ height: '400px', width: '100%' }}>
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                {devicePosition && (
-                    <Marker position={devicePosition}>
-                        <Popup>
-                            Device Location:
-                            {deviceAddress && `${deviceAddress.road}, ${deviceAddress.city}, ${deviceAddress.state}, ${deviceAddress.country}`}
-                        </Popup>
-                    </Marker>
-                )}
-                {ipPosition && (
-                    <Marker position={ipPosition}>
-                        <Popup>
-                            IP Location:
-                            {ipAddress && `${ipAddress.road}, ${ipAddress.city}, ${ipAddress.state}, ${ipAddress.country}`}
-                        </Popup>
-                    </Marker>
-                )}
-            </MapContainer>
-        );
-    };
-
     return (
-        <div className="grid grid-cols-2 gap-6 w-3/4 mx-auto">
-            <div className="space-y-6">
-                <h1 className="title">Speed Test</h1>
-                {ipInfo && (
-                    <div className="ip-info">
-                        <p>IP: {ipInfo.ip}</p>
-                        <p>City: {ipInfo.city}</p>
-                        <p>Region: {ipInfo.region}</p>
-                        <p>Country: {ipInfo.country}</p>
-                        <p>Org: {ipInfo.org}</p>
-                        <p>Timezone: {ipInfo.timezone}</p>
+        <div className="flex flex-col items-center p-4">
+            <h1 className="text-3xl font-bold mb-6">Speed Test Dashboard</h1>
+            <div className="flex flex-row items-start space-x-6 w-full">
+                <div className="w-4/12 space-y-6">
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaGlobe className="mr-2" /> IP Information
+                        </h2>
+                        {ipInfo && (
+                            <div className="space-y-2">
+                                <p><strong>IP:</strong> {ipInfo.ip}</p>
+                                <p><strong>City:</strong> {ipInfo.city}</p>
+                                <p><strong>Region:</strong> {ipInfo.region}</p>
+                                <p><strong>Country:</strong> {ipInfo.country}</p>
+                                <p><strong>Org:</strong> {ipInfo.org}</p>
+                                <p><strong>Timezone:</strong> {ipInfo.timezone}</p>
+                            </div>
+                        )}
                     </div>
-                )}
-                <div>
-                    <button onClick={runSpeedTest} className="primary-btn" disabled={testing}>
-                        {testing ? 'Testing...' : 'Run Speed Test'}
-                    </button>
-                    {downloadSpeed && <p>Download Speed: {downloadSpeed} Mbps</p>}
-                    {uploadSpeed && <p>Upload Speed: {uploadSpeed} Mbps</p>}
-                    {jitter && <p>Jitter: {jitter} ms</p>}
-                    {packetLoss && <p>Packet Loss: {packetLoss} %</p>}
-                    {ping && <p>Ping: {ping} ms</p>}
-                    {latency && <p>Latency: {latency} ms</p>}
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaMapMarkerAlt className="mr-2" /> Location
+                        </h2>
+                        {!isGeolocationAvailable ? (
+                            <p>Your browser does not support Geolocation</p>
+                        ) : !isGeolocationEnabled ? (
+                            <p>Geolocation is not enabled</p>
+                        ) : coords ? (
+                            <div className="space-y-2">
+                                <p><strong>Latitude:</strong> {coords.latitude}</p>
+                                <p><strong>Longitude:</strong> {coords.longitude}</p>
+                                <p><strong>Altitude:</strong> {coords.altitude}</p>
+                                <p><strong>Heading:</strong> {coords.heading}</p>
+                                <p><strong>Speed:</strong> {coords.speed}</p>
+                            </div>
+                        ) : (
+                            <p>Getting the location data&hellip; </p>
+                        )}
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaNetworkWired className="mr-2" /> User Agent
+                        </h2>
+                        <p>{userAgent}</p>
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <button onClick={runSpeedTest} className="primary-btn w-full py-2" disabled={testing}>
+                            {testing ? 'Testing...' : 'Run Speed Test'}
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <h2>User Agent</h2>
-                    <p>{userAgent}</p>
-                </div>
-                <div>
-                    <h2>Location</h2>
-                    {!isGeolocationAvailable ? (
-                        <p>Your browser does not support Geolocation</p>
-                    ) : !isGeolocationEnabled ? (
-                        <p>Geolocation is not enabled</p>
-                    ) : coords ? (
-                        <div>
-                            <p>Latitude: {coords.latitude}</p>
-                            <p>Longitude: {coords.longitude}</p>
-                            <p>Altitude: {coords.altitude}</p>
-                            <p>Heading: {coords.heading}</p>
-                            <p>Speed: {coords.speed}</p>
-                        </div>
-                    ) : (
-                        <p>Getting the location data&hellip; </p>
-                    )}
-                </div>
-                <div>
-                    <h2>Map</h2>
-                    {renderMap()}
+                <div className="w-8/12 grid grid-cols-2 gap-6">
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <GaugeChart label="Download Speed" unit="Mbps" data={downloadSpeed || 0} />
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <GaugeChart label="Upload Speed" unit="Mbps" data={uploadSpeed || 0} />
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaTachometerAlt className="mr-2" /> Jitter
+                        </h2>
+                        {jitter !== null && <p>{jitter} ms</p>}
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaTachometerAlt className="mr-2" /> Packet Loss
+                        </h2>
+                        {packetLoss !== null && <p>{packetLoss} %</p>}
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaTachometerAlt className="mr-2" /> Ping
+                        </h2>
+                        {ping !== null && <p>{ping} ms</p>}
+                    </div>
+                    <div className="p-4 border rounded-lg shadow-md bg-white">
+                        <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            <FaTachometerAlt className="mr-2" /> Latency
+                        </h2>
+                        {latency !== null && <p>{latency} ms</p>}
+                    </div>
                 </div>
             </div>
-            <div className="space-y-6">
-                <h2>(Timeseries)</h2>
-                <pre>{JSON.stringify(getData, null, 2)}</pre>
+            <div className="w-full mt-6">
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
+                    <FaMapMarkerAlt className="mr-2" /> Map
+                </h2>
+                <MapComponent devicePosition={devicePosition} ipPosition={ipPosition} deviceAddress={deviceAddress} ipAddress={ipAddress} />
             </div>
         </div>
     );
