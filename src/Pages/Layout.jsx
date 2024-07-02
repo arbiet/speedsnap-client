@@ -5,8 +5,15 @@ import { showWarningAlert, showSuccessAlert } from '../Utils/alertUtils';
 
 const adminLinks = [
     { to: "/dashboard", label: "Dashboard" },
-  { to: "", label: "Users", subLinks: [{ to: "/users", label: "Manage Users" }] },
+    { to: "", label: "Users", subLinks: [{ to: "/users", label: "Manage Users" }] },
+    { to: "", label: "ISPs", subLinks: [
+        { to: "/service_providers", label: "Manage ISPs" },
+        { to: "/coverage_areas", label: "Coverage Areas" },
+        { to: "/service_types", label: "Service Types" },
+        { to: "/plan_details", label: "Plan Details" }
+    ] },
 ];
+
 
 const userLinks = [
   { to: "/speedtest", label: "Internet Service Provider" },
