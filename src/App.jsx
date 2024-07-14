@@ -43,7 +43,7 @@ export default function App() {
           <Route path='/users/new' element={token ? <AddUser /> : <Login />} />
           <Route path='/users/:id/edit' element={token ? <EditUser /> : <Login />} />
           <Route path='/speedtest' element={ <SpeedTest />} />
-          <Route path='/recommendations' element={token ? <Recommendations /> : <Login />} />
+          <Route path='/recommendations' element={<Recommendations />} />
           <Route path='/service_providers' element={token ? <ServiceProviders /> : <Login />} />
           <Route path='/service_providers/new' element={token ? <AddServiceProvider /> : <Login />} />
           <Route path='/service_providers/:id/edit' element={token ? <EditServiceProvider /> : <Login />} />

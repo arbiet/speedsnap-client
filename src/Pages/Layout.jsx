@@ -23,6 +23,7 @@ const userLinks = [
 
 const guestLinks = [
   { to: "/speedtest", label: "Speed Test" },
+  { to: "", label: "Recommendations", subLinks: [{ to: "/recommendations", label: "Top Recommendations" }] },
   { to: "/register", label: "Register" },
   { to: "/login", label: "Login" },
 ];
