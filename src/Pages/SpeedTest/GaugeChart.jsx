@@ -11,7 +11,7 @@ const GaugeChart = ({ label, unit, data }) => {
         }
 
         const ctx = chartRef.current.getContext('2d');
-        const gradientSegment = ctx.createLinearGradient(0, 0, 700, 0);
+        const gradientSegment = ctx.createLinearGradient(0, 0, 300, 0);
         gradientSegment.addColorStop(0, 'red');
         gradientSegment.addColorStop(0.7, 'yellow');
         gradientSegment.addColorStop(1, 'green');
@@ -20,8 +20,10 @@ const GaugeChart = ({ label, unit, data }) => {
             labels: ['Score', 'Gray Area'],
             datasets: [{
                 label: label,
-                data: [0, 100], // Start with 0
-                backgroundColor: [gradientSegment, 'rgba(0, 0, 0, 0.2)'],
+                // data: [0, 30], // Start with 0
+                // backgroundColor: [gradientSegment, 'rgba(0, 0, 0, 0.2)'],
+                data: data > 30 ? [data, 0] : [data, 30 - data],
+                backgroundColor: data > 30 ? [gradientSegment, 'rgba(0, 0, 0, 0)'] : [gradientSegment, 'rgba(0, 0, 0, 0.2)'],
                 borderColor: [gradientSegment, 'rgba(0, 0, 0, 0.2)'],
                 borderWidth: 1,
                 cutout: '90%',
@@ -59,7 +61,7 @@ const GaugeChart = ({ label, unit, data }) => {
                 }
 
                 textLabel(`0 ${unit}`, left, yCoor + 20, 15, 'top', 'left');
-                textLabel(`100 ${unit}`, right, yCoor + 20, 15, 'top', 'right');
+                textLabel(`30 ${unit}`, right, yCoor + 20, 15, 'top', 'right');
                 textLabel(`${score} Mbps`, xCoor, yCoor, 80, 'bottom', 'center');
                 textLabel(rating, xCoor, yCoor - 100, 30, 'bottom', 'center');
             }
