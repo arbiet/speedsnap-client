@@ -177,9 +177,9 @@ const SpeedTest = () => {
                             <div className="space-y-2">
                                 <p><strong>Latitude:</strong> {coords.latitude}</p>
                                 <p><strong>Longitude:</strong> {coords.longitude}</p>
-                                <p><strong>Altitude:</strong> {coords.altitude}</p>
-                                <p><strong>Heading:</strong> {coords.heading}</p>
-                                <p><strong>Speed:</strong> {coords.speed}</p>
+                                {deviceAddress && (
+                                    <p><strong>Address:</strong> {deviceAddress.road}, {deviceAddress.district}, {deviceAddress.city}, {deviceAddress.state}, {deviceAddress.country}</p>
+                                )}
                             </div>
                         ) : (
                             <p>Getting the location data&hellip; </p>
